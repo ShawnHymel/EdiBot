@@ -1,4 +1,7 @@
+import sys
+
 import SimpleCV
+sys.path.append('/usr/local/lib/i386-linux-gnu/python2.7/site-packages/')
 import mraa
 import time
 
@@ -75,9 +78,13 @@ while(True):
 		if circles:
 			if 0 <= circles[-1].x < left_section:
 				driveForwardLeft()
-			if left_section <= circles[-1].x <= center_section:
+			elif left_section <= circles[-1].x <= center_section:
 				driveForward()
-			if center_section < circles[-1].x <= right_section:
-				driveForwardRight()	
+			elif center_section < circles[-1].x <= right_section:
+				driveForwardRight()
+			else:
+				stopDriving()
+		else:
+			stopDriving()	
 	else:
 		stopDriving()
