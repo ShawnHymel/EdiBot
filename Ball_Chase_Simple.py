@@ -78,10 +78,13 @@ while(True):
 		if circles:
 			if 0 <= circles[-1].x < left_section:
 				driveForwardLeft()
+				time.sleep(0.5)
 			elif left_section <= circles[-1].x <= center_section:
 				driveForward()
+				time.sleep(0.5)
 			elif center_section < circles[-1].x <= right_section:
 				driveForwardRight()
+				time.sleep(0.5)
 			else:
 				stopDriving()
 		else:
