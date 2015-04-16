@@ -186,6 +186,9 @@ Board</text>
 <text x="61.468" y="9.271" size="0.762" layer="21" font="vector" ratio="15" rot="R180" align="top-center">GND</text>
 <text x="1.905" y="1.27" size="1.2192" layer="16" font="vector" ratio="15" rot="SMR0" align="center">v01</text>
 <text x="29.21" y="-10.16" size="1.778" layer="51" font="vector">Shawn Hymel</text>
+<text x="7.62" y="21.209" size="0.762" layer="22" font="vector" ratio="15" rot="MR180" align="center">Cut to
+disable
+Power LED</text>
 </plain>
 <libraries>
 <library name="SparkFun-LED">
@@ -1979,7 +1982,9 @@ design rules under a new name.</description>
 <attribute name="NAME" x="71.12" y="1.27" size="0.762" layer="25" font="vector" ratio="15" rot="R180" align="center"/>
 <attribute name="VALUE" x="74.93" y="15.875" size="1.778" layer="27" ratio="10" rot="R180"/>
 </element>
-<element name="SJ1" library="SparkFun-Passives" package="PAD-JUMPER-2-NC_BY_TRACE_YES_SILK" value="JUMPER-PAD-2-NC_BY_TRACE" x="7.62" y="18.415" rot="MR90"/>
+<element name="SJ1" library="SparkFun-Passives" package="PAD-JUMPER-2-NC_BY_TRACE_YES_SILK" value="JUMPER-PAD-2-NC_BY_TRACE" x="7.62" y="18.415" smashed="yes" rot="MR90">
+<attribute name="NAME" x="7.62" y="16.637" size="0.762" layer="26" font="vector" ratio="15" rot="MR0" align="center"/>
+</element>
 <element name="U1" library="SparkFun-AnalogIC" package="TO-92" value="TL431PTH" x="17.78" y="6.35" smashed="yes" rot="R270">
 <attribute name="NAME" x="17.78" y="9.779" size="0.762" layer="25" font="vector" ratio="15" rot="R180" align="center"/>
 </element>
