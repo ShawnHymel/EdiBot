@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.05" unitdist="inch" unit="inch" style="dots" multiple="1" display="yes" altdistance="0.025" altunitdist="inch" altunit="inch"/>
+<grid distance="0.01" unitdist="inch" unit="inch" style="dots" multiple="1" display="yes" altdistance="0.005" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="yes"/>
@@ -159,9 +159,9 @@
 <wire x1="50.8" y1="2.54" x2="50.8" y2="30.48" width="0.2032" layer="21"/>
 <wire x1="50.8" y1="30.48" x2="22.86" y2="30.48" width="0.2032" layer="21"/>
 <wire x1="22.86" y1="30.48" x2="22.86" y2="2.54" width="0.2032" layer="21"/>
-<text x="7.62" y="20.32" size="0.762" layer="21" font="vector" ratio="15" align="center">R_TRIM</text>
-<text x="66.04" y="17.78" size="0.762" layer="21" font="vector" ratio="15" align="center">R2</text>
-<text x="66.04" y="13.97" size="0.762" layer="21" font="vector" ratio="15" align="center">R3</text>
+<text x="7.62" y="18.542" size="0.762" layer="21" font="vector" ratio="15" align="center">R_TRIM</text>
+<text x="66.04" y="16.002" size="0.762" layer="21" font="vector" ratio="15" align="center">R2</text>
+<text x="66.04" y="12.192" size="0.762" layer="21" font="vector" ratio="15" align="center">R1</text>
 <text x="36.83" y="8.382" size="1.016" layer="21" font="vector" ratio="15" align="center">DC/DC Converter
 Breakout</text>
 <text x="3.81" y="1.905" size="1.016" layer="21" font="vector" ratio="15" align="center">Low
@@ -1438,14 +1438,6 @@ We've spent an enormous amount of time creating and checking these footprints an
 You are welcome to use this library for commercial purposes. For attribution, we ask that when you begin to sell your device using our footprint, you email us with a link to the product being sold. We want bragging rights that we helped (in a very small part) to create your 8th world wonder. We would like the opportunity to feature your device on our homepage.</description>
 <packages>
 <package name="DEANS">
-<wire x1="2.159" y1="0.6858" x2="2.159" y2="-0.6858" width="0.127" layer="46" curve="-180"/>
-<wire x1="-2.159" y1="-0.6858" x2="-2.159" y2="0.6858" width="0.127" layer="46" curve="-180"/>
-<wire x1="-2.159" y1="0.6858" x2="2.159" y2="0.6858" width="0.127" layer="46"/>
-<wire x1="-2.159" y1="-0.6858" x2="2.159" y2="-0.6858" width="0.127" layer="46"/>
-<wire x1="0.0508" y1="-4.7498" x2="1.4224" y2="-4.7498" width="0.127" layer="46" curve="-180"/>
-<wire x1="1.4224" y1="-9.0678" x2="0.0508" y2="-9.0678" width="0.127" layer="46" curve="-180"/>
-<wire x1="0.0508" y1="-9.0678" x2="0.0508" y2="-4.7498" width="0.127" layer="46"/>
-<wire x1="1.4224" y1="-9.0678" x2="1.4224" y2="-4.7498" width="0.127" layer="46"/>
 <pad name="+" x="0" y="0" drill="1.27" diameter="3.556" shape="long"/>
 <pad name="-" x="0.7366" y="-6.9215" drill="1.27" diameter="3.556" shape="long" rot="R90"/>
 <wire x1="-3.81" y1="2.3622" x2="3.81" y2="2.3622" width="0.2032" layer="21"/>
@@ -1459,6 +1451,14 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="-1.778" y1="-2.286" x2="-1.778" y2="-3.302" width="0.127" layer="21"/>
 <wire x1="-2.286" y1="-2.794" x2="-1.27" y2="-2.794" width="0.127" layer="21"/>
 <wire x1="-2.032" y1="-7.62" x2="-2.032" y2="-6.604" width="0.127" layer="21"/>
+<wire x1="0.0508" y1="-9.7536" x2="0.0508" y2="-4.064" width="0.127" layer="20"/>
+<wire x1="0.0508" y1="-4.064" x2="1.4224" y2="-4.064" width="0.127" layer="20"/>
+<wire x1="1.4224" y1="-4.064" x2="1.4224" y2="-9.7536" width="0.127" layer="20"/>
+<wire x1="0.0508" y1="-9.7536" x2="1.4224" y2="-9.7536" width="0.127" layer="20"/>
+<wire x1="2.8448" y1="-0.6858" x2="-2.8448" y2="-0.6858" width="0.127" layer="20"/>
+<wire x1="-2.8448" y1="-0.6858" x2="-2.8448" y2="0.6858" width="0.127" layer="20"/>
+<wire x1="-2.8448" y1="0.6858" x2="2.8448" y2="0.6858" width="0.127" layer="20"/>
+<wire x1="2.8448" y1="-0.6858" x2="2.8448" y2="0.6858" width="0.127" layer="20"/>
 </package>
 <package name="1X05_LOCK">
 <wire x1="6.985" y1="1.27" x2="8.255" y2="1.27" width="0.2032" layer="21"/>
@@ -1913,36 +1913,76 @@ design rules under a new name.</description>
 </pass>
 </autorouter>
 <elements>
-<element name="D1" library="SparkFun-LED" package="LED5MM" value="GREEN" x="11.43" y="6.35" rot="R270"/>
-<element name="D2" library="SparkFun-LED" package="LED5MM" value="RED" x="3.81" y="6.35" rot="R270"/>
+<element name="D1" library="SparkFun-LED" package="LED5MM" value="GREEN" x="11.43" y="6.35" smashed="yes" rot="R270">
+<attribute name="NAME" x="11.43" y="10.287" size="0.762" layer="25" font="vector" ratio="15" align="center"/>
+</element>
+<element name="D2" library="SparkFun-LED" package="LED5MM" value="RED" x="3.81" y="6.35" smashed="yes" rot="R270">
+<attribute name="NAME" x="3.81" y="10.287" size="0.762" layer="25" font="vector" ratio="15" align="center"/>
+</element>
 <element name="FRAME1" library="SparkFun-Aesthetics" package="CREATIVE_COMMONS" value="" x="-1.27" y="-10.16">
 <attribute name="VERSION" value="v01" x="-1.27" y="-10.16" size="1.778" layer="27" display="off"/>
 <attribute name="DESIGNER" value="Shawn Hymel" x="-1.27" y="-10.16" size="1.778" layer="27" display="off"/>
 </element>
-<element name="J1" library="SparkFun-Connectors" package="DEANS" value="BATTERY_CONNDEANS" x="54.61" y="5.08" rot="R90"/>
-<element name="JP1" library="SparkFun-Connectors" package="1X05_LOCK" value="" x="31.75" y="5.08"/>
-<element name="JP2" library="SparkFun-Connectors" package="1X03_LOCK" value="" x="34.29" y="27.94"/>
-<element name="JP3" library="SparkFun-Connectors" package="SCREWTERMINAL-5MM-2" value="" x="64.77" y="27.94">
+<element name="J1" library="SparkFun-Connectors" package="DEANS" value="BATTERY_CONNDEANS" x="54.61" y="5.08" smashed="yes" rot="R90"/>
+<element name="JP1" library="SparkFun-Connectors" package="1X05_LOCK" value="" x="31.75" y="5.08" smashed="yes">
+<attribute name="NAME" x="36.83" y="3.175" size="0.762" layer="25" font="vector" ratio="15" align="center"/>
+<attribute name="VALUE" x="30.48" y="1.905" size="1.27" layer="27"/>
+</element>
+<element name="JP2" library="SparkFun-Connectors" package="1X03_LOCK" value="" x="34.29" y="27.94" smashed="yes">
+<attribute name="NAME" x="36.83" y="26.035" size="0.762" layer="25" font="vector" ratio="15" align="center"/>
+<attribute name="VALUE" x="33.02" y="24.765" size="1.27" layer="27"/>
+</element>
+<element name="JP3" library="SparkFun-Connectors" package="SCREWTERMINAL-5MM-2" value="" x="64.77" y="27.94" smashed="yes">
 <attribute name="STOREFRONT_ID" value="PRT-08432" x="64.77" y="27.94" size="1.778" layer="27" display="off"/>
+<attribute name="NAME" x="67.183" y="26.289" size="0.762" layer="25" font="vector" ratio="15" align="center"/>
+<attribute name="VALUE" x="63.5" y="29.21" size="0.4064" layer="27"/>
 </element>
-<element name="JP4" library="SparkFun-Connectors" package="SCREWTERMINAL-5MM-2" value="" x="8.89" y="27.94">
+<element name="JP4" library="SparkFun-Connectors" package="SCREWTERMINAL-5MM-2" value="" x="8.89" y="27.94" smashed="yes">
 <attribute name="STOREFRONT_ID" value="PRT-08432" x="8.89" y="27.94" size="1.778" layer="27" display="off"/>
+<attribute name="NAME" x="11.303" y="26.289" size="0.762" layer="25" font="vector" ratio="15" align="center"/>
+<attribute name="VALUE" x="7.62" y="29.21" size="0.4064" layer="27"/>
 </element>
-<element name="JP5" library="SparkFun-Connectors" package="1X04_LOCK" value="" x="1.27" y="31.75" rot="R270"/>
-<element name="Q1" library="SparkFun-DiscreteSemi" package="TO220V" value="MOSFET-PCHANNELFQP27P06" x="55.88" y="25.4" rot="R270">
+<element name="JP5" library="SparkFun-Connectors" package="1X04_LOCK" value="" x="1.27" y="31.75" smashed="yes" rot="R270">
+<attribute name="NAME" x="1.27" y="22.225" size="0.762" layer="25" font="vector" ratio="15" align="center"/>
+<attribute name="VALUE" x="-1.905" y="33.02" size="1.27" layer="27" rot="R270"/>
+</element>
+<element name="Q1" library="SparkFun-DiscreteSemi" package="TO220V" value="MOSFET-PCHANNELFQP27P06" x="55.88" y="25.4" smashed="yes" rot="R270">
 <attribute name="PART_NAME" value="NDP6020P" x="55.88" y="25.4" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="NAME" x="56.896" y="19.685" size="0.762" layer="25" font="vector" ratio="15" align="center"/>
 </element>
-<element name="R1" library="SparkFun-Resistors" package="AXIAL-0.4" value="" x="66.04" y="13.97"/>
-<element name="R2" library="SparkFun-Resistors" package="AXIAL-0.4" value="" x="66.04" y="17.78" rot="R180"/>
-<element name="R3" library="SparkFun-Resistors" package="AXIAL-0.4" value="" x="66.04" y="21.59"/>
-<element name="R4" library="SparkFun-Resistors" package="AXIAL-0.4" value="" x="7.62" y="16.51" rot="R180"/>
-<element name="R5" library="SparkFun-Resistors" package="AXIAL-0.4" value="" x="7.62" y="12.7" rot="R180"/>
-<element name="R_TRIM" library="SparkFun-Resistors" package="AXIAL-0.4" value="" x="7.62" y="20.32"/>
-<element name="S1" library="SparkFun-Electromechanical" package="SWITCH-SPDT" value="" x="71.12" y="6.35" rot="R180">
+<element name="R1" library="SparkFun-Resistors" package="AXIAL-0.4" value="" x="66.04" y="13.97" smashed="yes">
+<attribute name="NAME" x="66.04" y="12.192" size="0.762" layer="25" font="vector" ratio="15" align="center"/>
+<attribute name="VALUE" x="63.754" y="13.589" size="0.8128" layer="21" font="vector" ratio="15"/>
+</element>
+<element name="R2" library="SparkFun-Resistors" package="AXIAL-0.4" value="" x="66.04" y="17.78" smashed="yes" rot="R180">
+<attribute name="NAME" x="66.04" y="16.002" size="0.762" layer="25" font="vector" ratio="15" rot="R180" align="center"/>
+<attribute name="VALUE" x="68.326" y="18.161" size="0.8128" layer="21" font="vector" ratio="15" rot="R180"/>
+</element>
+<element name="R3" library="SparkFun-Resistors" package="AXIAL-0.4" value="" x="66.04" y="21.59" smashed="yes">
+<attribute name="NAME" x="66.04" y="19.812" size="0.762" layer="25" font="vector" ratio="15" align="center"/>
+<attribute name="VALUE" x="63.754" y="21.209" size="0.8128" layer="21" font="vector" ratio="15"/>
+</element>
+<element name="R4" library="SparkFun-Resistors" package="AXIAL-0.4" value="" x="7.62" y="16.51" smashed="yes" rot="R180">
+<attribute name="NAME" x="7.62" y="14.732" size="0.762" layer="25" font="vector" ratio="15" rot="R180" align="center"/>
+<attribute name="VALUE" x="9.906" y="16.891" size="0.8128" layer="21" font="vector" ratio="15" rot="R180"/>
+</element>
+<element name="R5" library="SparkFun-Resistors" package="AXIAL-0.4" value="" x="7.62" y="12.7" smashed="yes" rot="R180">
+<attribute name="NAME" x="7.62" y="10.922" size="0.762" layer="25" font="vector" ratio="15" rot="R180" align="center"/>
+<attribute name="VALUE" x="9.906" y="13.081" size="0.8128" layer="21" font="vector" ratio="15" rot="R180"/>
+</element>
+<element name="R_TRIM" library="SparkFun-Resistors" package="AXIAL-0.4" value="" x="7.62" y="20.32" smashed="yes">
+<attribute name="NAME" x="7.62" y="18.542" size="0.762" layer="25" font="vector" ratio="15" align="center"/>
+<attribute name="VALUE" x="5.334" y="19.939" size="0.8128" layer="21" font="vector" ratio="15"/>
+</element>
+<element name="S1" library="SparkFun-Electromechanical" package="SWITCH-SPDT" value="" x="71.12" y="6.35" smashed="yes" rot="R180">
 <attribute name="PROD_ID" value="SWCH-08261" x="71.12" y="6.35" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="NAME" x="71.12" y="1.27" size="0.762" layer="25" font="vector" ratio="15" rot="R180" align="center"/>
+<attribute name="VALUE" x="74.93" y="15.875" size="1.778" layer="27" ratio="10" rot="R180"/>
 </element>
 <element name="SJ1" library="SparkFun-Passives" package="PAD-JUMPER-2-NC_BY_TRACE_YES_SILK" value="JUMPER-PAD-2-NC_BY_TRACE" x="7.62" y="18.415" rot="MR90"/>
-<element name="U1" library="SparkFun-AnalogIC" package="TO-92" value="TL431PTH" x="17.78" y="6.35" rot="R270"/>
+<element name="U1" library="SparkFun-AnalogIC" package="TO-92" value="TL431PTH" x="17.78" y="6.35" smashed="yes" rot="R270">
+<attribute name="NAME" x="17.78" y="9.779" size="0.762" layer="25" font="vector" ratio="15" rot="R180" align="center"/>
+</element>
 <element name="LOGO1" library="SparkFun-Aesthetics" package="OSHW-LOGO-S" value="OSHW-LOGOS" x="46.355" y="12.7"/>
 <element name="LOGO2" library="SparkFun-Aesthetics" package="SFE_LOGO_FLAME_.1" value="SFE_LOGO_FLAME.1_INCH" x="25.4" y="11.43"/>
 <element name="LOGO3" library="SparkFun-Aesthetics" package="SFE_LOGO_NAME_FLAME_.2" value="SFE_LOGO_NAME_FLAME.2_INCH" x="48.514" y="12.7" rot="MR0"/>
@@ -2159,10 +2199,10 @@ design rules under a new name.</description>
 <approved hash="4,1,06c98fff7086f78a"/>
 <approved hash="4,16,e01f6c018ec01f50"/>
 <approved hash="4,16,06c98fff7086f78a"/>
-<approved hash="19,16,f0bde8e7b9e28c52"/>
 <approved hash="19,16,4f3fbe4785f15963"/>
-<approved hash="19,16,371cf7a799cf817f"/>
+<approved hash="19,16,f0bde8e7b9e28c52"/>
 <approved hash="19,16,1f1e89ade139af81"/>
+<approved hash="19,16,371cf7a799cf817f"/>
 </errors>
 </board>
 </drawing>

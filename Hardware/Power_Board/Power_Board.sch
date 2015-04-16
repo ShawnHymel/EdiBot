@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -19250,14 +19250,6 @@ We've spent an enormous amount of time creating and checking these footprints an
 You are welcome to use this library for commercial purposes. For attribution, we ask that when you begin to sell your device using our footprint, you email us with a link to the product being sold. We want bragging rights that we helped (in a very small part) to create your 8th world wonder. We would like the opportunity to feature your device on our homepage.</description>
 <packages>
 <package name="DEANS">
-<wire x1="2.159" y1="0.6858" x2="2.159" y2="-0.6858" width="0.127" layer="46" curve="-180"/>
-<wire x1="-2.159" y1="-0.6858" x2="-2.159" y2="0.6858" width="0.127" layer="46" curve="-180"/>
-<wire x1="-2.159" y1="0.6858" x2="2.159" y2="0.6858" width="0.127" layer="46"/>
-<wire x1="-2.159" y1="-0.6858" x2="2.159" y2="-0.6858" width="0.127" layer="46"/>
-<wire x1="0.0508" y1="-4.7498" x2="1.4224" y2="-4.7498" width="0.127" layer="46" curve="-180"/>
-<wire x1="1.4224" y1="-9.0678" x2="0.0508" y2="-9.0678" width="0.127" layer="46" curve="-180"/>
-<wire x1="0.0508" y1="-9.0678" x2="0.0508" y2="-4.7498" width="0.127" layer="46"/>
-<wire x1="1.4224" y1="-9.0678" x2="1.4224" y2="-4.7498" width="0.127" layer="46"/>
 <pad name="+" x="0" y="0" drill="1.27" diameter="3.556" shape="long"/>
 <pad name="-" x="0.7366" y="-6.9215" drill="1.27" diameter="3.556" shape="long" rot="R90"/>
 <wire x1="-3.81" y1="2.3622" x2="3.81" y2="2.3622" width="0.2032" layer="21"/>
@@ -19271,6 +19263,14 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="-1.778" y1="-2.286" x2="-1.778" y2="-3.302" width="0.127" layer="21"/>
 <wire x1="-2.286" y1="-2.794" x2="-1.27" y2="-2.794" width="0.127" layer="21"/>
 <wire x1="-2.032" y1="-7.62" x2="-2.032" y2="-6.604" width="0.127" layer="21"/>
+<wire x1="0.0508" y1="-9.7536" x2="0.0508" y2="-4.064" width="0.127" layer="20"/>
+<wire x1="0.0508" y1="-4.064" x2="1.4224" y2="-4.064" width="0.127" layer="20"/>
+<wire x1="1.4224" y1="-4.064" x2="1.4224" y2="-9.7536" width="0.127" layer="20"/>
+<wire x1="0.0508" y1="-9.7536" x2="1.4224" y2="-9.7536" width="0.127" layer="20"/>
+<wire x1="2.8448" y1="-0.6858" x2="-2.8448" y2="-0.6858" width="0.127" layer="20"/>
+<wire x1="-2.8448" y1="-0.6858" x2="-2.8448" y2="0.6858" width="0.127" layer="20"/>
+<wire x1="-2.8448" y1="0.6858" x2="2.8448" y2="0.6858" width="0.127" layer="20"/>
+<wire x1="2.8448" y1="-0.6858" x2="2.8448" y2="0.6858" width="0.127" layer="20"/>
 </package>
 <package name="1X05">
 <wire x1="6.985" y1="1.27" x2="8.255" y2="1.27" width="0.2032" layer="21"/>
