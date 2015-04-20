@@ -58,3 +58,18 @@ class firmataClient:
 	def analogWrite(self, pin, value):
 		self.ser.write(chr(self.ANALOG_MESSAGE | (pin & 0x0F)) + \
 				chr(value & 0x7F) + chr(value >> 7))
+
+	# Read analog (ADC) value from an analog pin
+	def analogRead(self, a_pin):
+		self.ser.flushInput()
+		self.ser.write(chr(self.REPORT_ANALOG | (a_pin & 0x0F)) + \
+				chr(0x01))
+		while self.ser.inWaiting() < 3:
+			pass
+		self.ser.read()
+		value = ord(self.ser.read())
+		value += ord(self.ser.read()) << 7
+		self.ser.write(chr(self.REPORT_ANALOG | (a_pin & 0x0F)) + \
+				chr(0x00))
+		self.ser.flushInput()
+		return value
