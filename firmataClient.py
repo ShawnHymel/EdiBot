@@ -42,6 +42,7 @@ class firmataClient:
 
 	def __init__(self, serial_port):
 		self.ser = serial.Serial(serial_port, 57600, timeout=0.02)
+        self.ser.write(chr(0xFF))
 		
 	# Turn on reporting for the pin and set the desired mode
 	def pinMode(self, pin, mode):
