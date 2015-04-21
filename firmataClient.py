@@ -6,6 +6,10 @@ Date: April 18, 2015
 
 Based on the Firmata Client by Jim Lindblom.
 
+Known Issues:
+ - Only digital output, PWM out, and analog in have been implemented
+ - Only pins 0-7 work for digital output
+
 Distributed as-is; no warranty is given.
 """
 
@@ -33,6 +37,9 @@ class firmataClient:
 	REPORT_VERSION = 0xF9
 	SYSTEM_RESET = 0xFF
 
+	# Class variables
+	port_data = 0
+
 	def __init__(self, serial_port):
 		self.ser = serial.Serial(serial_port, 57600, timeout=0.02)
 		
@@ -44,15 +51,12 @@ class firmataClient:
 	# Write a digital value to a pin
 	def digitalWrite(self, pin, value):
 		port = (pin >> 3) & 0x0F
-		data = 0
-	
 		if value:
-			data |= (1 << (pin & 0x07))
+			self.port_data |= (1 << (pin & 0x07))
 		else:
-			data &= ~(1 << (pin & 0x07))
-
+			self.port_data &= ~(1 << (pin & 0x07))
 		self.ser.write(chr(self.DIGITAL_MESSAGE | port) + \
-			chr(data & 0x7F) + chr(data >> 7))
+			chr(self.port_data & 0x7F) + chr(self.port_data >> 7))
 
 	# Write PWM (analog) value to a pin
 	def analogWrite(self, pin, value):
