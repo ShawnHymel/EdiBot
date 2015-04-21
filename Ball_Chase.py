@@ -5,7 +5,7 @@ import SimpleCV
 from firmataClient import firmataClient
 
 # Parameters
-DEBUG = 1
+DEBUG = 0
 SPEED = 50
 COLOR = SimpleCV.Color.RED
 CAMERA_WIDTH = 160
