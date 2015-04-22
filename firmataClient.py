@@ -14,6 +14,7 @@ Distributed as-is; no warranty is given.
 """
 
 import serial
+import time
 
 class firmataClient:
 	
@@ -40,10 +41,21 @@ class firmataClient:
 	# Class variables
 	port_data = 0
 
+	# Constructor
 	def __init__(self, serial_port):
+		# This is a hack! Open serial port, reset the Arduino 
+		# firmata, close the serial port, and open it again.
 		self.ser = serial.Serial(serial_port, 57600, timeout=0.02)
-        self.ser.write(chr(0xFF))
-		
+		self.ser.write(chr(0xFF))
+		time.sleep(1.0)
+		self.ser.close()
+		self.ser.open()
+		self.ser.write(chr(0xFF))
+	
+	# Destructor
+	def __del__(self):
+		self.ser.close()
+
 	# Turn on reporting for the pin and set the desired mode
 	def pinMode(self, pin, mode):
 		self.ser.write(chr(self.REPORT_DIGITAL | pin) + chr(1))

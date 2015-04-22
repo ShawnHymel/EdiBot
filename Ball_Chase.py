@@ -1,4 +1,6 @@
+import subprocess
 import signal
+import serial
 import sys
 import time
 import SimpleCV
@@ -6,7 +8,7 @@ from firmataClient import firmataClient
 
 # Parameters
 DEBUG = 0
-SPEED = 50
+SPEED = 100
 COLOR = SimpleCV.Color.RED
 CAMERA_WIDTH = 160
 CAMERA_HEIGHT = 120
@@ -25,7 +27,7 @@ CH4_PWM_PIN = 10
 CH4_DIR_PIN = 5
 
 # Global variables
-firmata = firmataClient('/dev/ttyMFD1')
+firmata = firmataClient("/dev/ttyMFD1")
 
 ##############################################################################
 # Functions
@@ -33,10 +35,26 @@ firmata = firmataClient('/dev/ttyMFD1')
 
 def signalHandler(signal, frame):
 	if DEBUG:
-		print("Exiting...")
+		print "Exiting..."
 	sys.exit(0)
 
+def waitForCamera():
+        while True:
+                proc = subprocess.Popen(['lsusb'], stdout=subprocess.PIPE)
+                out = proc.communicate()[0]
+                lines = out.split('\n')
+                for line in lines:
+                        if 'Webcam' in line:
+                                if DEBUG:
+					print "Camera found!"
+				time.sleep(1.0)
+				return
+		if DEBUG:
+			print "Waiting for camera..."
+		time.sleep(1.0)
+
 def initPins():
+
 	firmata.pinMode(CH1_PWM_PIN, firmata.MODE_PWM)
 	firmata.pinMode(CH1_DIR_PIN, firmata.MODE_OUTPUT)
 	firmata.pinMode(CH2_PWM_PIN, firmata.MODE_PWM)
@@ -194,6 +212,7 @@ def main():
 	signal.signal(signal.SIGINT, signalHandler)
 
 	# Setup
+	waitForCamera()
 	initPins()
 	cam = SimpleCV.Camera(0, {"width": CAMERA_WIDTH, \
 		"height": CAMERA_HEIGHT})
