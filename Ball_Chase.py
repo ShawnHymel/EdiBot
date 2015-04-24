@@ -50,7 +50,7 @@ def waitForCamera():
                 out = proc.communicate()[0]
                 lines = out.split('\n')
                 for line in lines:
-                        if 'Webcam' in line:
+                        if 'Logitech' in line:
                                 if DEBUG:
 					print "Camera found!"
 				time.sleep(1.0)
