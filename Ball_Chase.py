@@ -15,6 +15,7 @@ CAMERA_HEIGHT = 120
 MIN_BLOB_SIZE = 20
 MIN_AREA = 1500
 MAX_AREA = 3000
+LOW_BATTERY_WARN = 765	# ADC value. About 6.5V
 
 # Pins
 CH1_PWM_PIN = 3
@@ -25,6 +26,11 @@ CH3_PWM_PIN = 11
 CH3_DIR_PIN = 6
 CH4_PWM_PIN = 10
 CH4_DIR_PIN = 5
+VSEN_PIN = 0
+LED_PIN = 8
+
+# Constants
+ADC_OFFSET = 14
 
 # Global variables
 firmata = firmataClient("/dev/ttyMFD1")
@@ -63,6 +69,8 @@ def initPins():
 	firmata.pinMode(CH3_DIR_PIN, firmata.MODE_OUTPUT)
 	firmata.pinMode(CH4_PWM_PIN, firmata.MODE_PWM)
 	firmata.pinMode(CH4_DIR_PIN, firmata.MODE_OUTPUT)
+	firmata.pinMode((VSEN_PIN + ADC_OFFSET), firmata.MODE_ANALOG)
+	firmata.pinMode(LED_PIN, firmata.MODE_OUTPUT)
 
 def stopDriving():
 	firmata.digitalWrite(CH1_DIR_PIN, 0)
@@ -190,7 +198,7 @@ def driveTest():
 	forwardLeft(SPEED)
 	time.sleep(1.0)
 	forwardRight(SPEED)
-	time.sleep(1.0)
+	tim;OBe.sleep(1.0)
 	backwardLeft(SPEED)
 	time.sleep(1.0)
 	backwardRight(SPEED)
@@ -212,6 +220,7 @@ def main():
 	signal.signal(signal.SIGINT, signalHandler)
 
 	# Setup
+	vsen_count = 0
 	waitForCamera()
 	initPins()
 	cam = SimpleCV.Camera(0, {"width": CAMERA_WIDTH, \
@@ -223,6 +232,18 @@ def main():
 
 	# Loop
 	while True:
+
+		# Check voltage and set LED if battery voltage is low
+                vsen_count += 1
+                if vsen_count >= 1000:
+			vsen_count = 0
+                        vsen = firmata.analogRead(VSEN_PIN)
+			if DEBUG:
+                        	print "Analog: " + str(vsen)
+			if vsen <= LOW_BATTERY_WARN:
+				firmata.digitalWrite(LED_PIN, 1)
+			else:
+				firmata.digitalWrite(LED_PIN, 0)
 		
 		# Take a picture and look for blobs
 		img = cam.getImage()
