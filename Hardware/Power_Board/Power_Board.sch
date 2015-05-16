@@ -23082,7 +23082,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="R3" library="SparkFun-Resistors" deviceset="RESISTOR" device="PTH-1/4W"/>
 <part name="U1" library="SparkFun-AnalogIC" deviceset="TL431" device="PTH"/>
 <part name="Q1" library="SparkFun-DiscreteSemi" deviceset="MOSFET-PCHANNEL" device="FQP27P06">
-<attribute name="PART_NAME" value="NDP6020P"/>
+<attribute name="PART_NAME" value="FQP27P06"/>
 </part>
 <part name="GND2" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
 <part name="GND3" library="SparkFun-Aesthetics" deviceset="GND" device=""/>
