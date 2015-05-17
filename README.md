@@ -1,7 +1,7 @@
 EdiBot
 ======
 
-[![EdiBot](https://hackster.imgix.net/uploads/cover_image/file/47727/IMG_8434.JPG)*EdiBot*](https://www.hackster.io/ShawnHymel/edibot)
+[![EdiBot](https://hackster.imgix.net/uploads/cover_image/file/47727/IMG_8434.JPG)](https://www.hackster.io/ShawnHymel/edibot)
 
 EdiBot is an object tracking robot. It looks for red objects in the field of vision of its webcam and attempts to drive toward the largest one. If the object takes up too much area in its field of view, EdiBot will back up.
 
