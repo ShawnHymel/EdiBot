@@ -38,6 +38,7 @@ CHAN = '#' + NICK.lower()
 
 # Parameters
 DEBUG = 0
+PUSH_TO_START = True
 SPEED = 100
 
 # Pins
@@ -50,7 +51,8 @@ CH3_DIR_PIN = 6
 CH4_PWM_PIN = 10
 CH4_DIR_PIN = 5
 VSEN_PIN = 0
-LED_PIN = 8
+STATUS_LED_PIN = 7
+START_BUTTON_PIN = 8
 
 # Constants
 ADC_OFFSET = 14
@@ -100,7 +102,8 @@ def initPins():
 	firmata.pinMode(CH4_PWM_PIN, firmata.MODE_PWM)
 	firmata.pinMode(CH4_DIR_PIN, firmata.MODE_OUTPUT)
 	firmata.pinMode((VSEN_PIN + ADC_OFFSET), firmata.MODE_ANALOG)
-	firmata.pinMode(LED_PIN, firmata.MODE_OUTPUT)
+    firmata.pinMode(STATUS_LED_PIN, firmata.MODE_OUTPUT)
+    firmata.pinMode(START_BUTTON_PIN, firmata.MODE_INPUT)
 
 def stopDriving():
 	firmata.digitalWrite(CH1_DIR_PIN, 0)
@@ -164,6 +167,19 @@ os.system('ffmpeg -f video4linux2 -s "%s" -r "%s" -i %s -f flv -ac 2 \
     % (INRES, FPS, CAMERA, GOP, GOPMIN, CBR, CBR, CBR, PIX_FMT, OUTRES, \
     QUALITY, THREADS, CBR, SERVER, STREAM_KEY))
 
+# Set up robot pins
+initPins()
+status_led = 0
+digitalWrite(STATUS_LED_PIN, status_led)
+
+# Wait for a button push to start taking commands
+if PUSH_TO_START:
+    while True:
+        print digitalRead(START_BUTTON_PIN)
+        status_led = status_led ^ 1
+        digitalWrite(STATUS_LED_PIN, status_led)
+        time.sleep(100)
+
 # Connect to Twitch channel
 con = socket.socket()
 con.connect((HOST, PORT))
@@ -173,9 +189,6 @@ joinChannel(CHAN)
 
 # Send hello message
 sendMessage(HELLO)
-
-# Set up robot pins
-initPins()
 
 # Main loop. Ctrl-C to exit
 data = ""
