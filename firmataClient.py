@@ -71,21 +71,6 @@ class firmataClient:
 		self.ser.write(chr(self.DIGITAL_MESSAGE | port) + \
 			chr(self.port_data & 0x7F) + chr(self.port_data >> 7))
             
-    # Read digital value from a pin
-    def digitalRead(self, pin):
-        self.ser.flushInput()
-        self.ser.write(chr(self.REPORT_DIGITAL | (a_pin & 0x0F)) + \
-				chr(0x01))
-		while self.ser.inWaiting() < 3:
-			pass
-		self.ser.read()
-		value = ord(self.ser.read())
-		value += ord(self.ser.read()) << 7
-		self.ser.write(chr(self.REPORT_ANALOG | (a_pin & 0x0F)) + \
-				chr(0x00))
-		self.ser.flushInput()
-		return value
-
 	# Write PWM (analog) value to a pin
 	def analogWrite(self, pin, value):
 		self.ser.write(chr(self.ANALOG_MESSAGE | (pin & 0x0F)) + \

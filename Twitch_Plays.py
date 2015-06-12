@@ -1,20 +1,22 @@
-# Twitch Listener
+# Twitch Plays AVC
 # Based on https://www.sevadus.tv/forums/index.php?/topic/774-simple-python-irc-bot/
 # Shawn Hymel @ SparkFun Electronics
 # May 23, 2015
 
-import os
 import re
+import signal
 import time
 import socket
+import os
+import sys
 from firmataClient import firmataClient
 
 # Connection parameters. Get oauth at http://www.twitchapps.com/tmi/
 HOST = 'irc.twitch.tv'
 PORT = 6667
 NICK = '<USERNAME>'
-OAUTH = 'oauth:xxxxxxxxxxxxxxxxxxxxxx'
-STREAM_KEY = "live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+OAUTH = 'oauth:<OAUTH>'
+STREAM_KEY = "live_<STREAM KEY>"
 
 # Camera parameters
 CAMERA = "/dev/video0"
@@ -31,14 +33,14 @@ AUDIO_RATE="44100"
 SERVER="live-lax" # twitch server http://twitchstatus.com/
 
 # Messages
-HELLO = "EdiBot online. Send me 'w', 'a', 's', and 'd' to move me!"
+HELLO = "Start! Send me 'w', 'a', 's', and 'd' to move me."
 
 # Derived parameters
 CHAN = '#' + NICK.lower()
 
 # Parameters
 DEBUG = 0
-PUSH_TO_START = True
+PUSH_TO_START = False
 SPEED = 100
 
 # Pins
@@ -50,9 +52,8 @@ CH3_PWM_PIN = 11
 CH3_DIR_PIN = 6
 CH4_PWM_PIN = 10
 CH4_DIR_PIN = 5
-VSEN_PIN = 0
 STATUS_LED_PIN = 7
-START_BUTTON_PIN = 8
+START_BUTTON_PIN = 0
 
 # Constants
 ADC_OFFSET = 14
@@ -65,6 +66,7 @@ firmata = firmataClient("/dev/ttyMFD1")
 ##############################################################################
 
 def sendMessage(msg):
+
     con.send(bytes(str('PRIVMSG %s :%s\r\n' % \
         (CHAN, msg)).encode('UTF-8')))
 
@@ -93,71 +95,91 @@ def getMessage(msg):
 
 def initPins():
 
-	firmata.pinMode(CH1_PWM_PIN, firmata.MODE_PWM)
-	firmata.pinMode(CH1_DIR_PIN, firmata.MODE_OUTPUT)
-	firmata.pinMode(CH2_PWM_PIN, firmata.MODE_PWM)
-	firmata.pinMode(CH2_DIR_PIN, firmata.MODE_OUTPUT)
-	firmata.pinMode(CH3_PWM_PIN, firmata.MODE_PWM)
-	firmata.pinMode(CH3_DIR_PIN, firmata.MODE_OUTPUT)
-	firmata.pinMode(CH4_PWM_PIN, firmata.MODE_PWM)
-	firmata.pinMode(CH4_DIR_PIN, firmata.MODE_OUTPUT)
-	firmata.pinMode((VSEN_PIN + ADC_OFFSET), firmata.MODE_ANALOG)
+    firmata.pinMode(CH1_PWM_PIN, firmata.MODE_PWM)
+    firmata.pinMode(CH1_DIR_PIN, firmata.MODE_OUTPUT)
+    firmata.pinMode(CH2_PWM_PIN, firmata.MODE_PWM)
+    firmata.pinMode(CH2_DIR_PIN, firmata.MODE_OUTPUT)
+    firmata.pinMode(CH3_PWM_PIN, firmata.MODE_PWM)
+    firmata.pinMode(CH3_DIR_PIN, firmata.MODE_OUTPUT)
+    firmata.pinMode(CH4_PWM_PIN, firmata.MODE_PWM)
+    firmata.pinMode(CH4_DIR_PIN, firmata.MODE_OUTPUT)
+    #firmata.pinMode((VSEN_PIN + ADC_OFFSET), firmata.MODE_ANALOG)
     firmata.pinMode(STATUS_LED_PIN, firmata.MODE_OUTPUT)
-    firmata.pinMode(START_BUTTON_PIN, firmata.MODE_INPUT)
+    firmata.pinMode(START_BUTTON_PIN, firmata.MODE_ANALOG)
 
 def stopDriving():
-	firmata.digitalWrite(CH1_DIR_PIN, 0)
-	firmata.digitalWrite(CH2_DIR_PIN, 0)
-	firmata.digitalWrite(CH3_DIR_PIN, 0)
-	firmata.digitalWrite(CH4_DIR_PIN, 0)
-	firmata.analogWrite(CH1_PWM_PIN, 0)
-	firmata.analogWrite(CH2_PWM_PIN, 0)
-	firmata.analogWrite(CH3_PWM_PIN, 0)
-	firmata.analogWrite(CH4_PWM_PIN, 0)
+    firmata.digitalWrite(CH1_DIR_PIN, 0)
+    firmata.digitalWrite(CH2_DIR_PIN, 0)
+    firmata.digitalWrite(CH3_DIR_PIN, 0)
+    firmata.digitalWrite(CH4_DIR_PIN, 0)
+    firmata.analogWrite(CH1_PWM_PIN, 0)
+    firmata.analogWrite(CH2_PWM_PIN, 0)
+    firmata.analogWrite(CH3_PWM_PIN, 0)
+    firmata.analogWrite(CH4_PWM_PIN, 0)
 
 def driveForward(speed):
-	firmata.digitalWrite(CH1_DIR_PIN, 0)
-	firmata.digitalWrite(CH2_DIR_PIN, 0)
-	firmata.digitalWrite(CH3_DIR_PIN, 1)
-	firmata.digitalWrite(CH4_DIR_PIN, 1)
-	firmata.analogWrite(CH1_PWM_PIN, speed)
-	firmata.analogWrite(CH2_PWM_PIN, speed)
-	firmata.analogWrite(CH3_PWM_PIN, speed)
-	firmata.analogWrite(CH4_PWM_PIN, speed)
+    firmata.digitalWrite(CH1_DIR_PIN, 0)
+    firmata.digitalWrite(CH2_DIR_PIN, 0)
+    firmata.digitalWrite(CH3_DIR_PIN, 1)
+    firmata.digitalWrite(CH4_DIR_PIN, 1)
+    firmata.analogWrite(CH1_PWM_PIN, speed)
+    firmata.analogWrite(CH2_PWM_PIN, speed)
+    firmata.analogWrite(CH3_PWM_PIN, speed)
+    firmata.analogWrite(CH4_PWM_PIN, speed)
 
 def driveBackward(speed):
-	firmata.digitalWrite(CH1_DIR_PIN, 1)
-	firmata.digitalWrite(CH2_DIR_PIN, 1)
-	firmata.digitalWrite(CH3_DIR_PIN, 0)
-	firmata.digitalWrite(CH4_DIR_PIN, 0)
-	firmata.analogWrite(CH1_PWM_PIN, speed)
-	firmata.analogWrite(CH2_PWM_PIN, speed)
-	firmata.analogWrite(CH3_PWM_PIN, speed)
-	firmata.analogWrite(CH4_PWM_PIN, speed)
+    firmata.digitalWrite(CH1_DIR_PIN, 1)
+    firmata.digitalWrite(CH2_DIR_PIN, 1)
+    firmata.digitalWrite(CH3_DIR_PIN, 0)
+    firmata.digitalWrite(CH4_DIR_PIN, 0)
+    firmata.analogWrite(CH1_PWM_PIN, speed)
+    firmata.analogWrite(CH2_PWM_PIN, speed)
+    firmata.analogWrite(CH3_PWM_PIN, speed)
+    firmata.analogWrite(CH4_PWM_PIN, speed)
 
 def spinLeft(speed):
-	firmata.digitalWrite(CH1_DIR_PIN, 0)
-	firmata.digitalWrite(CH2_DIR_PIN, 1)
-	firmata.digitalWrite(CH3_DIR_PIN, 1)
-	firmata.digitalWrite(CH4_DIR_PIN, 0)
-	firmata.analogWrite(CH1_PWM_PIN, speed)
-	firmata.analogWrite(CH2_PWM_PIN, speed)
-	firmata.analogWrite(CH3_PWM_PIN, speed)
-	firmata.analogWrite(CH4_PWM_PIN, speed)
+    firmata.digitalWrite(CH1_DIR_PIN, 0)
+    firmata.digitalWrite(CH2_DIR_PIN, 1)
+    firmata.digitalWrite(CH3_DIR_PIN, 1)
+    firmata.digitalWrite(CH4_DIR_PIN, 0)
+    firmata.analogWrite(CH1_PWM_PIN, speed)
+    firmata.analogWrite(CH2_PWM_PIN, speed)
+    firmata.analogWrite(CH3_PWM_PIN, speed)
+    firmata.analogWrite(CH4_PWM_PIN, speed)
 
 def spinRight(speed):
-	firmata.digitalWrite(CH1_DIR_PIN, 1)
-	firmata.digitalWrite(CH2_DIR_PIN, 0)
-	firmata.digitalWrite(CH3_DIR_PIN, 0)
-	firmata.digitalWrite(CH4_DIR_PIN, 1)
-	firmata.analogWrite(CH1_PWM_PIN, speed)
-	firmata.analogWrite(CH2_PWM_PIN, speed)
-	firmata.analogWrite(CH3_PWM_PIN, speed)
-	firmata.analogWrite(CH4_PWM_PIN, speed)
+    firmata.digitalWrite(CH1_DIR_PIN, 1)
+    firmata.digitalWrite(CH2_DIR_PIN, 0)
+    firmata.digitalWrite(CH3_DIR_PIN, 0)
+    firmata.digitalWrite(CH4_DIR_PIN, 1)
+    firmata.analogWrite(CH1_PWM_PIN, speed)
+    firmata.analogWrite(CH2_PWM_PIN, speed)
+    firmata.analogWrite(CH3_PWM_PIN, speed)
+    firmata.analogWrite(CH4_PWM_PIN, speed)
+
+##############################################################################
+# Other Functions
+#############################################################################
+
+# Kill program on Ctrl+C
+def signalHandler(signal, frame):
+	if DEBUG:
+		print "Exiting..."
+	sys.exit(0)
 
 ##############################################################################
 # Main
 ##############################################################################
+
+# register Ctrl+C
+loop = True
+signal.signal(signal.SIGINT, signalHandler)
+
+# Initialize pins and status LED
+initPins()
+if PUSH_TO_START:
+    status_led = 0
+    firmata.digitalWrite(STATUS_LED_PIN, status_led)
 
 # Set up video stream to Twitch channel
 os.system('ffmpeg -f video4linux2 -s "%s" -r "%s" -i %s -f flv -ac 2 \
@@ -167,18 +189,16 @@ os.system('ffmpeg -f video4linux2 -s "%s" -r "%s" -i %s -f flv -ac 2 \
     % (INRES, FPS, CAMERA, GOP, GOPMIN, CBR, CBR, CBR, PIX_FMT, OUTRES, \
     QUALITY, THREADS, CBR, SERVER, STREAM_KEY))
 
-# Set up robot pins
-initPins()
-status_led = 0
-digitalWrite(STATUS_LED_PIN, status_led)
-
 # Wait for a button push to start taking commands
 if PUSH_TO_START:
-    while True:
-        print digitalRead(START_BUTTON_PIN)
+    wait_loop = True
+    while wait_loop:
+        if firmata.analogRead(START_BUTTON_PIN) == 0:
+            wait_loop = False
         status_led = status_led ^ 1
-        digitalWrite(STATUS_LED_PIN, status_led)
-        time.sleep(100)
+        firmata.digitalWrite(STATUS_LED_PIN, status_led)
+        time.sleep(0.2)
+    firmata.digitalWrite(STATUS_LED_PIN, 1)
 
 # Connect to Twitch channel
 con = socket.socket()
