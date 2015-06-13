@@ -14,9 +14,9 @@ from firmataClient import firmataClient
 # Connection parameters. Get oauth at http://www.twitchapps.com/tmi/
 HOST = 'irc.twitch.tv'
 PORT = 6667
-NICK = '<USERNAME>'
-OAUTH = 'oauth:<OAUTH>'
-STREAM_KEY = "live_<STREAM KEY>"
+NICK = 'TwitchPlaysAVC'
+OAUTH = 'oauth:xxxxxxxxxxxxxxxxxxxxxx'
+STREAM_KEY = "live_xxxxxxxxxxxxxxxxxxxxxx"
 
 # Camera parameters
 CAMERA = "/dev/video0"
@@ -88,6 +88,9 @@ def getMessage(msg):
         i += 1
     result = result.lstrip(':')
     return result
+
+def pong():
+    con.send(bytes(str('PONG tmi.twitch.tv\r\n').encode('UTF-8')))
 
 ##############################################################################
 # Drive Fucntions
@@ -182,10 +185,10 @@ if PUSH_TO_START:
     firmata.digitalWrite(STATUS_LED_PIN, status_led)
 
 # Set up video stream to Twitch channel
-os.system('ffmpeg -f video4linux2 -s "%s" -r "%s" -i %s -f flv -ac 2 \
+os.system('/usr/local/bin/ffmpeg -f video4linux2 -s "%s" -r "%s" -i %s -f flv -ac 2 \
     -vcodec libx264 -g %s -keyint_min %s -b:v %s -minrate %s -maxrate %s \
     -pix_fmt %s -s %s -preset %s -tune film -threads %s -strict normal \
-    -bufsize %s "rtmp://%s.twitch.tv/app/%s" &' \
+    -bufsize %s "rtmp://%s.twitch.tv/app/%s" >> /dev/null &' \
     % (INRES, FPS, CAMERA, GOP, GOPMIN, CBR, CBR, CBR, PIX_FMT, OUTRES, \
     QUALITY, THREADS, CBR, SERVER, STREAM_KEY))
 
@@ -219,6 +222,12 @@ while True:
         data += con.recv(1024).decode('UTF-8')
         data_split = re.split(r"[~\r\n]+", data)
         data = data_split.pop()
+
+        # Send a keep-alive PONG if we get a PING from the server
+        #print data_split
+        if data_split[0].find('PING') != -1:
+          print "PING found! PONGing."
+          pong()
 
         # Parse the message
         for line in data_split:
