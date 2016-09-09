@@ -237,7 +237,7 @@ def chaseBlob(camWidth, x, size):
 
     # If blob is on the far right, spin right
     elif (seg * 4) <= x <= (seg * 5):
-        diffDrive(-SPEED, -SPEED)
+        diffDrive(-SPEED, SPEED)
         if VERBOSE:
             print "Spin right"
 
