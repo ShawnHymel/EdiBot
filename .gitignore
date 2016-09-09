@@ -139,6 +139,7 @@ Desktop.ini
 ## Python
 #############
 
+*.py~
 *.py[co]
 
 # Packages
