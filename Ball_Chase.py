@@ -1,7 +1,7 @@
 # Debugging options
-VERBOSE = True
-SHOW_IMAGE = True
-RUN_MOTORS = False
+VERBOSE = False
+SHOW_IMAGE = False
+RUN_MOTORS = True
 
 import subprocess
 import signal
@@ -35,26 +35,11 @@ MIN_SIZE = 30
 MAX_SIZE = 50
 
 # Camera resolution
-CAMERA_WIDTH = 320
-CAMERA_HEIGHT = 240
+CAMERA_WIDTH = 160
+CAMERA_HEIGHT = 120
 
-# Blob detector options
-detectorParams = cv2.SimpleBlobDetector_Params()
-detectorParams.minThreshold = 10
-detectorParams.maxThreshold = 200
-detectorParams.filterByArea = True
-detectorParams.minArea = 40
-detectorParams.maxArea = 70000
-detectorParams.filterByCircularity = False
-detectorParams.minCircularity = 0.1
-detectorParams.filterByConvexity = False
-detectorParams.minConvexity = 0.5
-detectorParams.filterByInertia = False
-detectorParams.minInertiaRatio = 0.5
-detectorParams.filterByColor = False
-
-# Create global blob detector
-detector = cv2.SimpleBlobDetector(detectorParams)
+# Minimum enclosing area of colored object
+MIN_AREA = 1
 
 if RUN_MOTORS:
 
@@ -176,7 +161,7 @@ def waitForCamera():
                 time.sleep(1.0)
 
 # Find the largest blob of the desired color
-def findColorBlob(img):
+def findColor(img):
 
     # Blur image to remove noise
     img = cv2.GaussianBlur(img, (3, 3), 0)
@@ -188,21 +173,26 @@ def findColorBlob(img):
     img = cv2.inRange(img, THRESHOLD_LOW, THRESHOLD_HIGH)
     
     # Dilate image to make white blobs larger
-    #img = cv2.erode(img, None, iterations = 2)
-    img = cv2.dilate(img, None, iterations = 1)
+    img = cv2.erode(img, None, iterations = 2)
+    img = cv2.dilate(img, None, iterations = 2)
+
+    # Find center of object using contours instead of blob detection. From:
+    # http://www.pyimagesearch.com/2015/09/14/ball-tracking-with-opencv/
+    cnts = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+    center = None
     
-    # Find the largest blob
-    keypoints = detector.detect(255 - img)
-    blob = None
-    blobSize = 0
-    if keypoints:
-        for k in keypoints:
-            if k.size > blobSize:
-                blob = k
-                blobSize = k.size
+    # Find the largest contour and use it to compute the min enclosing circle
+    if len(cnts) > 0:
+        c = max(cnts, key=cv2.contourArea)
+        ((x, y), radius) = cv2.minEnclosingCircle(c)
+        M = cv2.moments(c)
+        if M["m00"] > 0:
+            center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+            if radius < MIN_AREA:
+                center = None
 
     # Return the keypoint for the largest blob
-    return img, blob
+    return img, center
 
 # React to the blob's position in the frame (turn, back up, etc.)
 def chaseBlob(camWidth, x, size):
@@ -296,23 +286,22 @@ def main():
         ret_val, frame = cam.read()
         
         # Filter the image and find the largest blob
-        img, blob = findColorBlob(frame)
+        img, center = findColor(frame)
 
         # React to the blob
-        if blob != None:
+        if center != None:
             if RUN_MOTORS:
-                chaseBlob(camWidth, blob.pt[0], blob.size)
+                chaseBlob(camWidth, center[0], blob.size)
             if VERBOSE:
-                print "(" + str(round(blob.pt[0], 2)) + \
-                        "," + str(round(blob.pt[1], 2)) + ") " + \
-                        str(round(blob.size, 2))
+                print "(" + str(round(center[0], 2)) + \
+                        "," + str(round(center[1], 2)) + ")"
         else:
             if RUN_MOTORS:
                 diffDrive(0.0, 0.0)
 
         # Show image window (if debugging)
         if SHOW_IMAGE:
-            img = cv2.drawKeypoints(img, [blob])
+            #img = cv2.drawKeypoints(img, center)
             cv2.imshow('my webcam', img)
             cv2.waitKey(1) 
 
