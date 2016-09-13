@@ -1,17 +1,24 @@
+# Debugging options
+VERBOSE = True
+SHOW_IMAGE = True
+RUN_MOTORS = False
+
 import subprocess
 import signal
 import sys
 import time
-import mraa
 import cv2
 
-# Debugging options
-VERBOSE = True
-SHOW_IMAGE = False
+# Only import mraa if we have motors turned on
+if RUN_MOTORS:
+    import mraa
+
+# False: A is left, True: A is right
+swapMotors = True
 
 # Motor parameters. Set to 1 or -1 to change default direction
-dirA = -1
-dirB = -1
+leftDir = -1
+rightDir = -1
 
 # Motor speed (between 0.0 and 1.0)
 SPEED = 1.0
@@ -28,7 +35,7 @@ MIN_SIZE = 30
 MAX_SIZE = 50
 
 # Camera resolution
-CAMERA_WIDTH = 432
+CAMERA_WIDTH = 320
 CAMERA_HEIGHT = 240
 
 # Blob detector options
@@ -49,36 +56,54 @@ detectorParams.filterByColor = False
 # Create global blob detector
 detector = cv2.SimpleBlobDetector(detectorParams)
 
-# PWM A (pin 12) is on pin 20 in MRAA
-pwmA = mraa.Pwm(20)
-pwmA.period_us(1000)
-pwmA.enable(True)
+if RUN_MOTORS:
 
-# PWM B (pin 13) is on pin 14 in MRAA
-pwmB = mraa.Pwm(14)
-pwmB.period_us(1000)
-pwmB.enable(True)
+    # PWM A (pin 12) is on pin 20 in MRAA
+    pwmA = mraa.Pwm(20)
+    pwmA.period_us(1000)
+    pwmA.enable(True)
 
-# Direction pins A1 and A2 are on GPIO 48 and 47 (33 and 46 in MRAA)
-a1 = mraa.Gpio(33)
-a1.dir(mraa.DIR_OUT)
-a1.write(1)
-a2 = mraa.Gpio(46)
-a2.dir(mraa.DIR_OUT)
-a2.write(1)
+    # PWM B (pin 13) is on pin 14 in MRAA
+    pwmB = mraa.Pwm(14)
+    pwmB.period_us(1000)
+    pwmB.enable(True)
 
-# Direction pins B1 and B2 are on GPIO 15 and 14 (48 and 36 in MRAA)
-b1 = mraa.Gpio(48)
-b1.dir(mraa.DIR_OUT)
-b1.write(1)
-b2 = mraa.Gpio(36)
-b2.dir(mraa.DIR_OUT)
-b2.write(1)
+    # Direction pins A1 and A2 are on GPIO 48 and 47 (33 and 46 in MRAA)
+    a1 = mraa.Gpio(33)
+    a1.dir(mraa.DIR_OUT)
+    a1.write(1)
+    a2 = mraa.Gpio(46)
+    a2.dir(mraa.DIR_OUT)
+    a2.write(1)
 
-# Standby pin is GPIO 49 (47 in MRAA)
-standby = mraa.Gpio(47)
-standby.dir(mraa.DIR_OUT)
-standby.write(1)
+    # Direction pins B1 and B2 are on GPIO 15 and 14 (48 and 36 in MRAA)
+    b1 = mraa.Gpio(48)
+    b1.dir(mraa.DIR_OUT)
+    b1.write(1)
+    b2 = mraa.Gpio(36)
+    b2.dir(mraa.DIR_OUT)
+    b2.write(1)
+
+    # Assign left and right motors
+    if swapMotors:
+        leftPwm = pwmB
+        left1 = b1
+        left2 = b2
+        rightPwm = pwmA
+        right1 = a1
+        right2 = a2
+    else:
+        leftPwm = pwmA
+        left1 = a1
+        left2 = a2
+        rightPwm = pwmB
+        right1 = b1
+        right2 = b2
+
+    # Standby pin is GPIO 49 (47 in MRAA)
+    standby = mraa.Gpio(47)
+    standby.dir(mraa.DIR_OUT)
+    standby.write(1)
 
 ###############################################################################
 # Functions
@@ -98,37 +123,37 @@ def standby(mode):
         standby.write(1)
 
 # Differential drive. A and B can be -1 to 1.
-def diffDrive(speedA, speedB):
+def diffDrive(leftSpeed, rightSpeed):
 
     # Make sure the speeds are within the bounds
-    if speedA < -1.0:
-        speedA = -1.0
-    if speedA > 1.0:
-        speedA = 1.0
-    if speedB < -1.0:
-        speedB = -1.0
-    if speedB > 1.0:
-        speedB = 1.0
+    if leftSpeed < -1.0:
+        leftSpeed = -1.0
+    if leftSpeed > 1.0:
+        leftSpeed = 1.0
+    if rightSpeed < -1.0:
+        rightSpeed = -1.0
+    if rightSpeed > 1.0:
+        rightSpeed = 1.0
 
     # Set motor speeds
-    speedA = dirA * speedA
-    speedB = dirB * speedB
-    if speedA < 0:
-         a1.write(0)
-         a2.write(1)
-         pwmA.write(abs(speedA))
+    leftSpeed = leftDir * leftSpeed
+    rightSpeed = rightDir * rightSpeed
+    if leftSpeed < 0:
+        left1.write(0)
+        left2.write(1)
+        leftPwm.write(abs(leftSpeed))
     else:
-        a1.write(1)
-        a2.write(0)
-        pwmA.write(speedA)
-    if speedB < 0:
-        b1.write(0)
-        b2.write(1)
-        pwmB.write(abs(speedB))
+        left1.write(1)
+        left2.write(0)
+        leftPwm.write(leftSpeed)
+    if rightSpeed < 0:
+        right1.write(0)
+        right2.write(1)
+        rightPwm.write(abs(rightSpeed))
     else:
-        b1.write(1)
-        b2.write(0)
-        pwmB.write(speedB)
+        right1.write(1)
+        right2.write(0)
+        rightPwm.write(rightSpeed)
 
 # Wait for the webcam to show up in the USB devices list
 def waitForCamera():
@@ -163,6 +188,7 @@ def findColorBlob(img):
     img = cv2.inRange(img, THRESHOLD_LOW, THRESHOLD_HIGH)
     
     # Dilate image to make white blobs larger
+    #img = cv2.erode(img, None, iterations = 2)
     img = cv2.dilate(img, None, iterations = 1)
     
     # Find the largest blob
@@ -274,13 +300,15 @@ def main():
 
         # React to the blob
         if blob != None:
-            chaseBlob(camWidth, blob.pt[0], blob.size)
+            if RUN_MOTORS:
+                chaseBlob(camWidth, blob.pt[0], blob.size)
             if VERBOSE:
                 print "(" + str(round(blob.pt[0], 2)) + \
                         "," + str(round(blob.pt[1], 2)) + ") " + \
                         str(round(blob.size, 2))
         else:
-            diffDrive(0.0, 0.0)
+            if RUN_MOTORS:
+                diffDrive(0.0, 0.0)
 
         # Show image window (if debugging)
         if SHOW_IMAGE:
