@@ -13,15 +13,15 @@ import cv2
 if RUN_MOTORS:
     import mraa
 
-# False: A is left, True: A is right
+# False: A is right, True: A is left
 swapMotors = True
 
 # Motor parameters. Set to 1 or -1 to change default direction
-leftDir = -1
-rightDir = -1
+leftDir = 1
+rightDir = 1
 
 # Motor speed (between 0.0 and 1.0)
-SPEED = 1.0
+SPEED = 0.9
 
 # Webcam manufacturer
 WEBCAM_MAKE = 'Logitech'
@@ -32,13 +32,13 @@ THRESHOLD_HIGH = (35, 255, 255);
 
 # Robot will move to maintain a blob between these sizes
 MIN_SIZE = 30
-MAX_SIZE = 50
+MAX_SIZE = 40
 
 # Camera resolution
 CAMERA_WIDTH = 160
 CAMERA_HEIGHT = 120
 
-# Minimum enclosing area of colored object
+# Minimum enclosing area (radius) of colored object
 MIN_AREA = 1
 
 if RUN_MOTORS:
@@ -173,13 +173,14 @@ def findColor(img):
     img = cv2.inRange(img, THRESHOLD_LOW, THRESHOLD_HIGH)
     
     # Dilate image to make white blobs larger
-    img = cv2.erode(img, None, iterations = 2)
+    #img = cv2.erode(img, None, iterations = 2)
     img = cv2.dilate(img, None, iterations = 2)
 
     # Find center of object using contours instead of blob detection. From:
     # http://www.pyimagesearch.com/2015/09/14/ball-tracking-with-opencv/
     cnts = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
     center = None
+    radius = 0
     
     # Find the largest contour and use it to compute the min enclosing circle
     if len(cnts) > 0:
@@ -192,7 +193,7 @@ def findColor(img):
                 center = None
 
     # Return the keypoint for the largest blob
-    return img, center
+    return img, center, radius
 
 # React to the blob's position in the frame (turn, back up, etc.)
 def chaseBlob(camWidth, x, size):
@@ -286,15 +287,16 @@ def main():
         ret_val, frame = cam.read()
         
         # Filter the image and find the largest blob
-        img, center = findColor(frame)
+        img, center, radius = findColor(frame)
 
         # React to the blob
         if center != None:
             if RUN_MOTORS:
-                chaseBlob(camWidth, center[0], blob.size)
+                chaseBlob(camWidth, center[0], radius)
             if VERBOSE:
                 print "(" + str(round(center[0], 2)) + \
-                        "," + str(round(center[1], 2)) + ")"
+                        "," + str(round(center[1], 2)) + ") " + \
+                        str(round(radius, 2))
         else:
             if RUN_MOTORS:
                 diffDrive(0.0, 0.0)
