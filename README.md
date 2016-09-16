@@ -1,11 +1,11 @@
 EdiBot
 ======
 
-[![EdiBot](https://hackster.imgix.net/uploads/cover_image/file/47727/IMG_8434.JPG)](https://www.hackster.io/ShawnHymel/edibot)
+[![EdiBot](https://cloud.githubusercontent.com/assets/5232145/18596007/72e06034-7c04-11e6-8390-76c211ac2602.JPG)](https://www.hackster.io/ShawnHymel/edibot-2-0-8ec2b0)
 
-EdiBot is an object tracking robot. It looks for red objects in the field of vision of its webcam and attempts to drive toward the largest one. If the object takes up too much area in its field of view, EdiBot will back up.
+EdiBot is an object tracking robot. It looks for yellow objects in the field of vision of its webcam and attempts to drive toward the largest one. If the object takes up too much area in its field of view, EdiBot will back up.
 
-Information on building and using the EdiBot can be found on the [EdiBot Hackster page](https://www.hackster.io/ShawnHymel/edibot).
+Information on building and using the EdiBot can be found on the [EdiBot 2.0 Hackster page](https://www.hackster.io/ShawnHymel/edibot-2-0-8ec2b0).
 
 License Information
 -------------------
