@@ -5,7 +5,7 @@ EdiBot
 
 EdiBot is an object tracking robot. It looks for yellow objects in the field of vision of its webcam and attempts to drive toward the largest one. If the object takes up too much area in its field of view, EdiBot will back up.
 
-Information on building and using the EdiBot can be found on the [EdiBot 2.0 Hackster page](https://www.hackster.io/ShawnHymel/edibot-2-0-8ec2b0).
+Information on building and using EdiBot can be found on the [EdiBot 2.0 Hackster page](https://www.hackster.io/ShawnHymel/edibot-2-0-8ec2b0).
 
 License Information
 -------------------
