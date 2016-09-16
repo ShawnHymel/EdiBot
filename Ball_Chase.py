@@ -27,7 +27,7 @@ SPEED = 1.0
 WEBCAM_MAKE = 'Logitech'
 
 # HSV color thresholds for YELLOW
-THRESHOLD_LOW = (15, 215, 50);
+THRESHOLD_LOW = (15, 210, 20);
 THRESHOLD_HIGH = (35, 255, 255);
 
 # Robot will move to maintain a blob between these sizes
