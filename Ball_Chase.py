@@ -21,7 +21,7 @@ leftDir = 1
 rightDir = 1
 
 # Motor speed (between 0.0 and 1.0)
-SPEED = 0.9
+SPEED = 1.0
 
 # Webcam manufacturer
 WEBCAM_MAKE = 'Logitech'
@@ -174,7 +174,7 @@ def findColor(img):
     
     # Dilate image to make white blobs larger
     #img = cv2.erode(img, None, iterations = 2)
-    img = cv2.dilate(img, None, iterations = 2)
+    img = cv2.dilate(img, None, iterations = 1)
 
     # Find center of object using contours instead of blob detection. From:
     # http://www.pyimagesearch.com/2015/09/14/ball-tracking-with-opencv/
@@ -198,66 +198,54 @@ def findColor(img):
 # React to the blob's position in the frame (turn, back up, etc.)
 def chaseBlob(camWidth, x, size):
    
-    # Divide the frame up into 5 segments
-    seg = camWidth / 5
+    # Divide the frame up into 3 segments
+    seg3 = camWidth / 3
 
-    # If blob is on far left, spin left
-    if 0 <= x < (seg * 1):
-        diffDrive(SPEED, -SPEED)
-        if VERBOSE:
-            print "Spin left"
-
-    # If blob is on the left, turn to the left
-    elif (seg * 1) <= x < (seg * 2):
-        if 0 <= size < MIN_SIZE:
+    # If blob is far away, chase it
+    if 0 <= size < MIN_SIZE:
+        if 0 <= x < (seg3 * 1):
             diffDrive(SPEED, 0.0)
             if VERBOSE:
                 print "Forward left"
-        elif MIN_SIZE <= size <= MAX_SIZE:
-            diffDrive(0.0, 0.0)
-            if VERBOSE:
-                print "Stop"
-        else:
-            diffDrive(0.0, -SPEED)
-            if VERBOSE:
-                print "Back right"
-
-    # If blob is in the center, try to maintain a certain size in the frame
-    elif (seg * 2) <= x < (seg * 3):
-        if 0 <= size < MIN_SIZE:
+        elif (seg3 * 1) <= x < (seg3 * 2):
             diffDrive(SPEED, SPEED)
             if VERBOSE:
                 print "Forward"
-        elif MIN_SIZE <= size <= MAX_SIZE:
-            diffDrive(0.0, 0.0)
-            if VERBOSE:
-                print "Stop"
-        else:
-            diffDrive(-SPEED, -SPEED)
-            if VERBOSE:
-                print "Back"
-
-    # If blob is on the right, turn to the right
-    elif (seg * 3) <= x < (seg * 4):
-        if 0 <= size < MIN_SIZE:
+        elif (seg3 * 2) <= x <= (seg3 * 3):
             diffDrive(0.0, SPEED)
             if VERBOSE:
                 print "Forward right"
-        elif MIN_SIZE <= size <= MAX_SIZE:
+
+    # If blob is the correct distance away, turn to face it
+    elif MIN_SIZE <= size <= MAX_SIZE:
+        if 0 <= x < (seg3 * 1):
+            diffDrive(SPEED, 0.0)
+            if VERBOSE:
+                print "Forward left"
+        elif (seg3 * 1) <= x < (seg3 * 2):
             diffDrive(0.0, 0.0)
             if VERBOSE:
                 print "Stop"
-        else:
+        elif (seg3 * 2) <= x <= (seg3 * 3):
+            diffDrive(0.0, SPEED)
+            if VERBOSE:
+                print "Forward right"
+
+    # If blob is near, face it and back away
+    else:
+        if 0 <= x < (seg3 * 1):
+            diffDrive(0.0, -SPEED)
+            if VERBOSE:
+                print "Back right"
+        elif (seg3 * 1) <= x < (seg3 * 2):
+            diffDrive(-SPEED, -SPEED)
+            if VERBOSE:
+                print "Back"
+        elif (seg3 * 2) <= x <= (seg3 * 3):
             diffDrive(-SPEED, 0.0)
             if VERBOSE:
                 print "Back left"
-
-    # If blob is on the far right, spin right
-    elif (seg * 4) <= x <= (seg * 5):
-        diffDrive(-SPEED, SPEED)
-        if VERBOSE:
-            print "Spin right"
-
+        
 ###############################################################################
 # Main
 ###############################################################################
@@ -289,7 +277,7 @@ def main():
         # Filter the image and find the largest blob
         img, center, radius = findColor(frame)
 
-        # React to the blob
+        # React to the blob: chase if it exists in frame, otherwise stop
         if center != None:
             if RUN_MOTORS:
                 chaseBlob(camWidth, center[0], radius)
